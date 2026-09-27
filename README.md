@@ -1,57 +1,48 @@
 # BIZU Flashcards — PC/AP 2026 — Oficial Investigador
 
-Aplicativo web instalável (PWA) em Next.js 16 + React 19 + Supabase, com identidade Bizu Premium.
+Aplicativo Next.js + Supabase da Bizu Premium.
 
-## Estrutura do edital já cadastrada
+## Versão 5
 
-- 13 disciplinas;
-- 80 questões objetivas distribuídas conforme o edital;
-- 274 tópicos de estudo;
-- painel administrativo em `/admin`;
-- importação em massa por CSV;
-- login individual por e-mail e senha;
-- controle de acesso ao produto `pcap_oficial_investigador_2026`;
-- revisão **ERREI / DIFÍCIL / SEI**;
-- fila de revisão;
-- RLS no Supabase;
-- favoritos preparados;
-- PWA/manifest para instalação no celular.
+- dashboard do aluno com métricas reais;
+- histórico de revisões e sequência de estudo;
+- progresso real por disciplina;
+- Revisão do Dia, Revisar Erros, Favoritos e Reta Final funcionando;
+- favoritos diretamente no player;
+- painel administrativo redesenhado com abas;
+- filtros, busca e paginação de flashcards e assuntos;
+- edição e pausa/reativação de flashcards;
+- gestão de usuários e liberação/bloqueio de acesso;
+- importação CSV em área dedicada;
+- cobertura do edital por disciplina.
 
-## Banco de produção
+## Ambiente
 
-O projeto Supabase de produção já foi criado. Para uma instalação nova, use `supabase/schema.sql` e depois `supabase/seed_exam_structure.sql`.
+Node.js 22+.
 
-## Variáveis de ambiente
+Variáveis obrigatórias:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://ystdnlwvtzxugtgjofta.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxxxxxxxxxxxxxxxx
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<sua-chave-publica>
 ```
 
-Nunca coloque chave secreta/service role no navegador.
+Nunca coloque chave `service_role` no frontend.
 
-## Rodar localmente
+## Rodar
 
-1. Node.js 22 ou superior.
-2. `npm install`
-3. Configure `.env.local`.
-4. `npm run dev`
-5. Abra `http://localhost:3000`.
-
-## Publicar na Hostinger
-
-A Hostinger Web App/Node.js aceita Next.js e permite implantação por ZIP. Envie o ZIP do projeto, selecione Node.js 22, configure `npm install`, `npm run build` e `npm start`, adicione as duas variáveis de ambiente e depois conecte `flashcards.bizupremium.com`.
-
-## Administrador
-
-O painel `/admin` exige `app_metadata.role = admin`. O aluno comum não recebe permissões administrativas.
-
-## Importação de flashcards
-
-Cabeçalhos do CSV:
-
-```csv
-disciplina,assunto,frente,verso,referencia,dificuldade
+```bash
+npm install
+npm run dev
 ```
 
-Dificuldade: 1 = fácil, 2 = média, 3 = difícil.
+## Deploy Hostinger
+
+Repositório GitHub: `Fabiorcg25/bizu-flashcards-pcap`
+
+- Framework: Next.js
+- Branch: main
+- Node: 22.x
+- Diretório raiz: `./`
+- Build: padrão do Next.js
+- Domínio atual: `flashcard.bizupremium.com`

@@ -44,6 +44,47 @@ export async function createFlashcard(formData) {
   revalidatePath('/admin')
 }
 
+export async function updateFlashcard(formData) {
+  const { supabase } = await requireAdmin()
+  const id = String(formData.get('id') || '')
+  const topicId = String(formData.get('topic_id') || '')
+  const front = String(formData.get('front') || '').trim()
+  const back = String(formData.get('back') || '').trim()
+  const reference = String(formData.get('reference') || '').trim() || null
+  const difficulty = Math.min(3, Math.max(1, Number(formData.get('difficulty') || 2)))
+  const active = String(formData.get('active') || '') === 'true'
+  if (!id || !topicId || !front || !back) return
+  const { error } = await supabase.from('flashcards').update({ topic_id: topicId, front, back, reference, difficulty, active }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin')
+  redirect('/admin?tab=flashcards')
+}
+
+export async function toggleFlashcard(formData) {
+  const { supabase } = await requireAdmin()
+  const id = String(formData.get('id') || '')
+  const nextActive = String(formData.get('active') || '') === 'true'
+  if (!id) return
+  const { error } = await supabase.from('flashcards').update({ active: nextActive }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin')
+}
+
+export async function setUserAccess(formData) {
+  const { supabase } = await requireAdmin()
+  const userId = String(formData.get('user_id') || '')
+  const active = String(formData.get('active') || '') === 'true'
+  if (!userId) return
+  const { error } = await supabase.from('access_grants').upsert({
+    user_id: userId,
+    product_code: 'pcap_oficial_investigador_2026',
+    active,
+    expires_at: null
+  }, { onConflict: 'user_id,product_code' })
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin')
+}
+
 function parseCsv(text) {
   const rows = []
   let row = [], cell = '', quoted = false
@@ -114,7 +155,7 @@ export async function importFlashcards(formData) {
       reference: r.referencia || r.reference || null,
       difficulty: Math.min(3, Math.max(1, Number(r.dificuldade || r.difficulty || 2)))
     })
-    if (error) throw new Error(error.message)
+    if (error && !String(error.message).toLowerCase().includes('duplicate')) throw new Error(error.message)
   }
   revalidatePath('/admin')
 }

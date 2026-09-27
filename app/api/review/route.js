@@ -20,7 +20,7 @@ export async function POST(request) {
   if (rating === 'hard') next.setDate(next.getDate() + 1)
   if (rating === 'know') next.setDate(next.getDate() + 3)
 
-  const { error } = await supabase.from('reviews').upsert({
+  const { error: reviewError } = await supabase.from('reviews').upsert({
     user_id: userId,
     flashcard_id: flashcardId,
     rating,
@@ -28,6 +28,15 @@ export async function POST(request) {
     next_review_at: next.toISOString()
   }, { onConflict: 'user_id,flashcard_id' })
 
-  if (error) return NextResponse.json({ error: 'Não foi possível registrar a revisão.' }, { status: 400 })
+  if (reviewError) return NextResponse.json({ error: 'Não foi possível registrar a revisão.' }, { status: 400 })
+
+  const { error: eventError } = await supabase.from('review_events').insert({
+    user_id: userId,
+    flashcard_id: flashcardId,
+    rating,
+    reviewed_at: now.toISOString()
+  })
+
+  if (eventError) return NextResponse.json({ error: 'Revisão salva, mas o histórico não pôde ser atualizado.' }, { status: 400 })
   return NextResponse.json({ ok: true, nextReviewAt: next.toISOString() })
 }
