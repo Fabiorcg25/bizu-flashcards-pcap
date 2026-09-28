@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AppNav from '@/components/app-nav'
+import ResetProgressButton from '@/components/reset-progress-button'
 import { createClient } from '@/lib/supabase/server'
 import { updateStudyProfile } from './actions'
 import { logout } from '@/app/login/actions'
@@ -28,6 +29,7 @@ export default async function ProfilePage({ searchParams }) {
       <div className="card profile-card">
         <div className="eyebrow">PLANO PESSOAL</div><h2>Configure sua meta</h2><p className="muted">Esses dados ajustam o dashboard e ajudam a organizar sua reta final.</p>
         {query?.salvo === '1' && <div className="success-note">✓ Preferências salvas.</div>}
+        {query?.zerado === '1' && <div className="success-note">✓ Contagem e progresso de estudos zerados.</div>}
         <form action={updateStudyProfile}>
           <div className="field"><label>Nome</label><input name="full_name" defaultValue={profile?.full_name || ''} placeholder="Seu nome" /></div>
           <div className="field"><label>E-mail</label><input value={claims.email || profile?.email || ''} disabled /></div>
@@ -40,6 +42,13 @@ export default async function ProfilePage({ searchParams }) {
       <div className="profile-side">
         <div className="card countdown-card"><div className="eyebrow">RETA FINAL</div><b>{days === null ? '—' : days >= 0 ? days : 0}</b><span>{days === null ? 'Defina a data da prova' : 'dias para a prova'}</span><p className="muted">Com a data preenchida, o dashboard passa a mostrar sua contagem regressiva.</p><Link className="btn btn-ghost" href="/estudar/reta-final-50">ABRIR RETA FINAL</Link></div>
         <div className="card account-card"><div className="eyebrow">CONTA</div><h3>{claims.email}</h3><p className="muted">Seu progresso, revisões e favoritos ficam vinculados a este acesso.</p><form action={logout}><button className="btn btn-ghost" type="submit">SAIR DA CONTA</button></form></div>
+        <div className="card danger-card">
+          <div className="eyebrow">RECOMEÇAR ESTUDOS</div>
+          <h3>Zerar contagem</h3>
+          <p className="muted">Use esta opção para começar do zero. Ela apaga seu histórico de revisões e zera cards estudados, dominados, erros, revisões pendentes, sequência e desempenho.</p>
+          <div className="reset-safe-note">Seus favoritos, sua conta, seu acesso, sua meta e a data da prova serão mantidos. Os 13.000 flashcards não são apagados.</div>
+          <ResetProgressButton />
+        </div>
       </div>
     </section>
   </main>

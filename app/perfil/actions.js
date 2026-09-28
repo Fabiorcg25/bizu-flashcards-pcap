@@ -22,8 +22,31 @@ export async function updateStudyProfile(formData) {
     daily_goal:dailyGoal,
     exam_date:examDate
   },{onConflict:'id'})
+
   if (error) throw new Error(error.message)
+
   revalidatePath('/dashboard')
   revalidatePath('/perfil')
   redirect('/perfil?salvo=1')
+}
+
+export async function resetStudyProgress() {
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getClaims()
+  const claims = data?.claims
+  if (!claims) return { ok:false, error:'Não autenticado.' }
+
+  const { data:result, error } = await supabase.rpc('reset_my_study_progress')
+  if (error) return { ok:false, error:'Não foi possível zerar o progresso.' }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/desempenho')
+  revalidatePath('/estudar')
+  revalidatePath('/perfil')
+
+  return {
+    ok:true,
+    deletedReviewEvents:Number(result?.[0]?.deleted_review_events || 0),
+    deletedReviews:Number(result?.[0]?.deleted_reviews || 0)
+  }
 }
