@@ -1,5 +1,6 @@
 import './globals.css'
 import './smart.css'
+import './brasao-dashboard.css'
 
 export const metadata = {
   title: 'BIZU Flashcards — PC/AP Oficial Investigador',

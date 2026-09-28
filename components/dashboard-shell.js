@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import AppNav from '@/components/app-nav'
 
@@ -32,7 +33,23 @@ export default function DashboardShell({ subjects, demo = false, email = '', met
 
     <section className="hero smart-hero">
       <div className="card hero-card">
-        <div className="eyebrow">PLANO DE ESTUDO INTELIGENTE</div>
+        <div className="hero-card-header">
+          <div className="eyebrow">PLANO DE ESTUDO INTELIGENTE</div>
+          <div className="pcap-emblem" aria-label="Polícia Civil do Amapá">
+            <Image
+              src="/policia-civil-ap.png"
+              alt="Brasão da Polícia Civil do Amapá"
+              width={180}
+              height={180}
+              className="pcap-emblem-image"
+              priority
+            />
+            <div className="pcap-emblem-text">
+              <strong>PC/AP 2026</strong>
+              <span>OFICIAL INVESTIGADOR</span>
+            </div>
+          </div>
+        </div>
         <h2>Olá, {firstName}. Sua revisão de hoje já está priorizada.</h2>
         <p className="muted">O sistema combina incidência em prova, erros recentes e tempo desde a última revisão para montar sua próxima fila.</p>
         <div className="daily-progress"><div><span>Meta diária</span><b>{m.studiedToday}/{m.dailyGoal} cards</b></div><div className="progress"><span style={{width:`${goalPct}%`}} /></div></div>
